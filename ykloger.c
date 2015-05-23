@@ -75,6 +75,10 @@ static zend_function_entry ykloger_methods[] = {
         } \
     }while(false);\
 
+#define EXIST_EFREE(a) \
+    if(a){\
+        efree(a);\
+    }\
 
 PHP_METHOD(ykloger, reset_request_time){
     request_start_time = time(NULL);
@@ -190,10 +194,10 @@ static void ykloger_write(uint level_num, const char *level, const char * file_n
     gettimeofday(&tp, NULL);
     
     cur_pid = getpid();
-    //uri = sapi_getenv("REQUEST_URI", sizeof("REQUEST_URI")-1 TSRMLS_CC);
+
     uri = get_request_server(ZEND_STRS("REQUEST_URI") TSRMLS_CC);
-    //ip = sapi_getenv("REMOTE_ADDR", sizeof("REMOTE_ADDR")-1 TSRMLS_CC);
     ip = get_request_server(ZEND_STRS("REMOTE_ADDR") TSRMLS_CC);
+    refer = get_request_server(ZEND_STRS("HTTP_REFERER") TSRMLS_CC);
     
     file_name = php_format_date("YmdH", sizeof("YmdH"), time(NULL), 1 TSRMLS_CC);
     cur_date = php_format_date("Y-m-d H:i:s", sizeof("Y-m-d H:i:s"), time(NULL), 1 TSRMLS_CC);
@@ -207,9 +211,12 @@ static void ykloger_write(uint level_num, const char *level, const char * file_n
         line = zend_get_executed_lineno(TSRMLS_C);
     }
     
-    str_message_len = spprintf(&str_message, 0, "%-5s %s,%d [%s:%d] [%d] reqip[%s] uri[%s] reqid[%s], cost[%f] error[%d] %s%s\n", level, cur_date, tp.tv_usec, file, line, cur_pid, ip ? ip : "", uri ? uri : "", request_id, cost_usec, loger_errno, params_str ? params_str : "", message);
+    str_message_len = spprintf(&str_message, 0, "%-5s %s,%d [%s:%d] [%d] reqip[%s] uri[%s] refer[%s] reqid[%s], cost[%f] error[%d] %s%s\n", level, cur_date, tp.tv_usec, file, line, cur_pid, ip ? ip : "", uri ? uri : "", refer ? refer : "", request_id, cost_usec, loger_errno, params_str ? params_str : "", message);
     
     efree(params_str);
+    EXIST_EFREE(ip);
+    EXIST_EFREE(uri);
+    EXIST_EFREE(refer);
     
     true_file = (char*) emalloc(MAXPATHLEN);
     sprintf(true_file, "%s.%s%s", Z_STRVAL_P(logfile), level_num >= YKLOGER_LEVEL_WARN ? YKLOGER_GE_WARN_PRE_NAME : "", file_name);
