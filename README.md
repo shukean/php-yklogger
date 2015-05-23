@@ -1,8 +1,5 @@
 # php-ykloger
-
 date_default_timezone_set('Etc/GMT-8');
-#var_dump(YKLOGER_LEVEL_DEBUG);
-#include "/Users/yky/Documents/wwwroot/new-beijing/application/library/bqlogger/BqLogger.php";
 ykloger::init([
     'logFile' => '/Users/yky/Documents/wwwroot/logs/api/bqlog/api', 
     'logLevel' => YKLOGER_LEVEL_DEBUG, //YKLOGER_LEVEL_INFO, YKLOGER_LEVEL_WARN, YKLOGER_LEVEL_ERROR, YKLOGER_LEVEL_FATAL
