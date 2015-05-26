@@ -27,13 +27,13 @@ ZEND_BEGIN_ARG_INFO(arginfo_ykloger_init, 0)
     ZEND_ARG_ARRAY_INFO(0, config, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO(arginfo_ykloger_write, 0)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_ykloger_write, 0, 0, 1)
     ZEND_ARG_INFO(0, message)
     ZEND_ARG_INFO(0, errno)
     ZEND_ARG_ARRAY_INFO(0, params, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO(arginfo_reset_request_time, 0)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_reset_request_time, 0, 0, 0)
     ZEND_ARG_INFO(0, time)
 ZEND_END_ARG_INFO()
 
@@ -81,7 +81,12 @@ static zend_function_entry ykloger_methods[] = {
     }\
 
 PHP_METHOD(ykloger, reset_request_time){
-    request_start_time = time(NULL);
+    uint request_time = 0;
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|l", &request_time) == FAILURE) {
+        RETURN_FALSE;
+    }
+    request_start_time = request_time ? request_time : time(NULL);
+    RETURN_TRUE;
 }
 
 PHP_METHOD(ykloger, get_request_id){
@@ -204,7 +209,7 @@ static void ykloger_write(uint level_num, const char *level, const char * file_n
     
     cost_usec = tp.tv_sec + tp.tv_usec / MICRO_IN_SEC - request_start_time;
     
-    params_str = ykloger_array_to_string(&file, &line, params TSRMLS_CC);
+    params_str = params ? ykloger_array_to_string(&file, &line, params TSRMLS_CC) : NULL;
     
     if (!file || line == 0) {
         file = zend_get_executed_filename(TSRMLS_C);
@@ -213,7 +218,7 @@ static void ykloger_write(uint level_num, const char *level, const char * file_n
     
     str_message_len = spprintf(&str_message, 0, "%-5s %s,%d [%s:%d] [%d] reqip[%s] uri[%s] refer[%s] reqid[%s], cost[%f] error[%d] %s%s\n", level, cur_date, tp.tv_usec, file, line, cur_pid, ip ? ip : "", uri ? uri : "", refer ? refer : "", request_id, cost_usec, loger_errno, params_str ? params_str : "", message);
     
-    efree(params_str);
+    EXIST_EFREE(params_str);
     EXIST_EFREE(ip);
     EXIST_EFREE(uri);
     EXIST_EFREE(refer);
@@ -287,12 +292,12 @@ PHP_METHOD(ykloger, init){
 PHP_METHOD(ykloger, debug){
     char *message;
     char path[MAXPATHLEN];
-    uint message_len, loger_errno;
-    zval *params;
+    uint message_len, loger_errno = 0;
+    zval *params = NULL;
     
     LOGER_LEVEL_ENABLE(YKLOGER_LEVEL_DEBUG);
     
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sla", &message, &message_len, &loger_errno, &params) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|la", &message, &message_len, &loger_errno, &params) == FAILURE) {
         RETURN_FALSE;
     }
     
@@ -303,12 +308,12 @@ PHP_METHOD(ykloger, debug){
 
 PHP_METHOD(ykloger, info){
     char *message;
-    uint message_len, loger_errno;
-    zval *params;
+    uint message_len, loger_errno = 0;
+    zval *params = NULL;
     
     LOGER_LEVEL_ENABLE(YKLOGER_LEVEL_INFO);
     
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sla", &message, &message_len, &loger_errno, &params) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|la", &message, &message_len, &loger_errno, &params) == FAILURE) {
         RETURN_FALSE;
     }
     
@@ -319,12 +324,12 @@ PHP_METHOD(ykloger, info){
 
 PHP_METHOD(ykloger, warn){
     char *message;
-    uint message_len, loger_errno;
-    zval *params;
+    uint message_len, loger_errno = 0;
+    zval *params = NULL;
     
     LOGER_LEVEL_ENABLE(YKLOGER_LEVEL_WARN);
     
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sla", &message, &message_len, &loger_errno, &params) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|la", &message, &message_len, &loger_errno, &params) == FAILURE) {
         RETURN_FALSE;
     }
     
@@ -335,12 +340,12 @@ PHP_METHOD(ykloger, warn){
 
 PHP_METHOD(ykloger, error){
     char *message;
-    uint message_len, loger_errno;
-    zval *params;
+    uint message_len, loger_errno = 0;
+    zval *params = NULL;
     
     LOGER_LEVEL_ENABLE(YKLOGER_LEVEL_ERROR);
     
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sla", &message, &message_len, &loger_errno, &params) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|la", &message, &message_len, &loger_errno, &params) == FAILURE) {
         RETURN_FALSE;
     }
     
@@ -351,12 +356,12 @@ PHP_METHOD(ykloger, error){
 
 PHP_METHOD(ykloger, fatal){
     char *message;
-    uint message_len, loger_errno;
-    zval *params;
+    uint message_len, loger_errno = 0;
+    zval *params = NULL;
     
     LOGER_LEVEL_ENABLE(YKLOGER_LEVEL_FATAL);
     
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sla", &message, &message_len, &loger_errno, &params) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|la", &message, &message_len, &loger_errno, &params) == FAILURE) {
         RETURN_FALSE;
     }
     
