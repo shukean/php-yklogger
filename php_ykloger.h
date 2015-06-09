@@ -59,7 +59,7 @@ PHP_METHOD(ykloger, get_request_id);
 
 #define yKLOGER_ALIAS_BEEQUICK_NAME "BqLogger"
 
-#define YKLOGER_GE_WARN_PRE_NAME "wf"
+#define YKLOGER_GE_WARN_PRE_NAME "wf."
 
 #define MICRO_IN_SEC 1000000.00
 
