@@ -189,7 +189,7 @@ static void ykloger_write(uint level_num, const char *level, const char * file_n
     uint str_message_len;
     php_stream *stream;
     
-    logfile = zend_read_static_property(ykloger_ce, ZEND_STRL(YKLOGER_LOGFILE_NAME), 1 TSRMLS_CC);
+    logfile = zend_read_static_property(ykloger_ce, ZEND_STRL(YKLOGER_LOGFILE_NAME), 0 TSRMLS_CC);
     
     if (!logfile) {
         php_error(E_WARNING, "ykloger undeclared log file");
