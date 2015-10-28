@@ -108,12 +108,12 @@ static char * get_request_server(char *name, uint len TSRMLS_DC){
     return NULL;
 }
 
-static char * ykloger_array_to_string(char **file, uint *line, zval *params TSRMLS_DC){
+static char * ykloger_array_to_string(const char **file, uint *line, zval *params TSRMLS_DC){
     HashTable *pmht;
-    char *str=NULL;
-    uint str_start = 0, str_length = MAX_PARAMS_STR_LEN;
+    char *buf = NULL;
+    size_t pos = 0, buf_length = MAX_PARAMS_STR_LEN;
     
-    str = (char *)emalloc(str_length + 1);
+    buf = emalloc(buf_length);
     
     pmht = Z_ARRVAL_P(params);
     for (zend_hash_internal_pointer_reset(pmht); zend_hash_has_more_elements(pmht) == SUCCESS; zend_hash_move_forward(pmht)) {
@@ -161,27 +161,27 @@ static char * ykloger_array_to_string(char **file, uint *line, zval *params TSRM
         }
         zval_dtor(&tmpcopy);
         
-        if (str_start + tmp_len + 1 > str_length) {
-            str_length += MAX_PARAMS_STR_LEN;
-            str = (char *) erealloc(str, str_length);
+        if (pos + tmp_len >= buf_length) {
+            buf_length = buf_length + tmp_len + MAX_PARAMS_STR_LEN;
+            buf = erealloc(buf, buf_length);
         }
         
-        memcpy(str + str_start, tmp, tmp_len);
+        memcpy(buf + pos, tmp, tmp_len);
         efree(tmp);
         
-        str_start += tmp_len;
+        pos += tmp_len;
     }
-    *(str + str_start) = '\0';
     
-    return str;
+    return buf;
 }
 
 static void ykloger_write(uint level_num, const char *level, const char * file_name_pre, char *message, uint message_len, uint loger_errno, zval *params TSRMLS_DC){
-    char *file=NULL;
+    const char *file=NULL;
     uint line=0;
     zval *logfile;
     char *file_name, *cur_date, *true_file;
     struct timeval tp = {0};
+    time_t curtime;
     char *ip=NULL, *uri=NULL, *refer=NULL, *params_str=NULL;
     double cost_usec;
     pid_t cur_pid;
@@ -204,8 +204,9 @@ static void ykloger_write(uint level_num, const char *level, const char * file_n
     ip = get_request_server(ZEND_STRS("REMOTE_ADDR") TSRMLS_CC);
     refer = get_request_server(ZEND_STRS("HTTP_REFERER") TSRMLS_CC);
     
-    file_name = php_format_date("YmdH", sizeof("YmdH"), time(NULL), 1 TSRMLS_CC);
-    cur_date = php_format_date("Y-m-d H:i:s", sizeof("Y-m-d H:i:s"), time(NULL), 1 TSRMLS_CC);
+    time(&curtime);
+    file_name = php_format_date("YmdH", 4, curtime, 1 TSRMLS_CC);
+    cur_date = php_format_date("Y-m-d H:i:s", 11, curtime, 1 TSRMLS_CC);
     
     cost_usec = tp.tv_sec + tp.tv_usec / MICRO_IN_SEC - request_start_time;
     
@@ -225,6 +226,9 @@ static void ykloger_write(uint level_num, const char *level, const char * file_n
     
     true_file = (char*) emalloc(MAXPATHLEN);
     sprintf(true_file, "%s.%s%s", Z_STRVAL_P(logfile), level_num >= YKLOGER_LEVEL_WARN ? YKLOGER_GE_WARN_PRE_NAME : "", file_name);
+    
+    efree(file_name);
+    efree(cur_date);
     
     stream = php_stream_open_wrapper(true_file, "ab", USE_PATH | REPORT_ERRORS, NULL);
     if (stream == NULL) {

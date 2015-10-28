@@ -64,7 +64,7 @@ PHP_METHOD(ykloger, get_request_id);
 #define MICRO_IN_SEC 1000000.00
 
 #define MAX_PARAMS_STR_LEN (255)
-#define MAX_ROW_LOG_STR_LEN (102400)
+#define MAX_ROW_LOG_STR_LEN (1024)
 
 #ifdef ZTS
 #include "TSRM.h"
