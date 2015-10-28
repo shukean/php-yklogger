@@ -113,7 +113,7 @@ static char * ykloger_array_to_string(const char **file, uint *line, zval *param
     char *buf = NULL;
     size_t pos = 0, buf_length = MAX_PARAMS_STR_LEN;
     
-    buf = emalloc(buf_length);
+    buf = emalloc(buf_length + 1);
     
     pmht = Z_ARRVAL_P(params);
     for (zend_hash_internal_pointer_reset(pmht); zend_hash_has_more_elements(pmht) == SUCCESS; zend_hash_move_forward(pmht)) {
@@ -161,7 +161,7 @@ static char * ykloger_array_to_string(const char **file, uint *line, zval *param
         }
         zval_dtor(&tmpcopy);
         
-        if (pos + tmp_len >= buf_length) {
+        if (pos + tmp_len + 1 >= buf_length) {
             buf_length = buf_length + tmp_len + MAX_PARAMS_STR_LEN;
             buf = erealloc(buf, buf_length);
         }
@@ -171,6 +171,8 @@ static char * ykloger_array_to_string(const char **file, uint *line, zval *param
         
         pos += tmp_len;
     }
+    
+    *(buf + pos) = '\0';
     
     return buf;
 }
