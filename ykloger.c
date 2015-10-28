@@ -450,7 +450,7 @@ PHP_RINIT_FUNCTION(ykloger)
     PHP_MD5Final(digest, &context);
     make_digest_ex(request_id, digest, 16);
     
-    *(request_id + 33) = '\0';
+    efree(arg);
     
 	return SUCCESS;
 }
