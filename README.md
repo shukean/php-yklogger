@@ -1,6 +1,13 @@
 # php-ykloger
 php日志记录扩展. 共有5中级别. 分为:  debug,  info(trace), warn, error, fatal.
 
+##install
+mac or linux:  
+1.  wget https://github.com/shukean/php-ykloger/archive/master.zip
+2.  unzip master.php
+3.  phpize
+4.  ./configure --with-php-config= your_php_path/php-config
+5.  make && make install 
 
 ##init
 date_default_timezone_set('Etc/GMT-8');  
