@@ -1,5 +1,6 @@
 # php-ykloger
-php日志记录扩展. 共有5中级别. 分为:  debug,  info(trace), warn, error, fatal.
+php日志记录扩展. 共有5中级别. 分为:  debug,  info(trace), warn, error, fatal.  
+(php7 版本)
 
 ##install
 mac or linux:   
