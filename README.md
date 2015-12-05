@@ -8,7 +8,11 @@ mac or linux:
 2.  unzip master.php  
 3.  phpize   
 4.  ./configure --with-php-config= your_php_path/php-config  
-5.  make && make install   
+5.  make && make install  
+
+##php.ini
+ykloger.auto_flush_num = 50  
+达到多少条日志时, 才开始写入文件
 
 ##init
 date_default_timezone_set('Etc/GMT-8');  
