@@ -405,7 +405,7 @@ PHP_METHOD(ykloger, fatal){
 }
 
 PHP_METHOD(ykloger, resetRequestTime){
-    zend_long request_time = 0;
+    double request_time = 0;
     
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "|l", &request_time) == FAILURE) {
         return;
@@ -508,7 +508,7 @@ PHP_RINIT_FUNCTION(ykloger)
     make_digest_ex(request_id_str, digest, 16);
     
     ZVAL_STRING(&request_id, request_id_str);
-    ZVAL_LONG(&request_time, request_start_time);
+    ZVAL_DOUBLE(&request_time, request_start_time);
     
     zend_update_static_property(ykloger_ce, ZEND_STRL(YKLOGER_REQUEST_ID), &request_id);
     zend_update_static_property(ykloger_ce, ZEND_STRL(YKLOGER_REQUEST_START_TIME), &request_time);
