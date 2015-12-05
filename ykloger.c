@@ -189,7 +189,7 @@ static void ykloger_flush_logs_pool(uint type){
         FLUSH_LOGER_POOL(logfile, YKLOGER_GE_WARN_PRE_NAME, file_name, YKLOGER_POOL_WF_LOG);
     }
     
-    zend_string_free(file_name);
+    zend_string_release(file_name);
     
     return;
 }
@@ -243,7 +243,7 @@ static void ykloger_write(uint level_num, const char *level, zend_string *messag
     if (NULL != req_refer) {
         efree(req_refer);
     }
-    zend_string_free(req_date);
+    zend_string_release(req_date);
     if (NULL != params2str) {
         efree(params2str);
     }
@@ -293,7 +293,7 @@ PHP_METHOD(ykloger, init){
     logfile_key = zend_string_init(ZEND_STRL(YKLOGER_LOGFILE_NAME), 0);
     logfile = zend_hash_find(Z_ARRVAL_P(conf), logfile_key);
     if (logfile == NULL) {
-        zend_string_free(logfile_key);
+        zend_string_release(logfile_key);
         php_error_docref(NULL, E_ERROR, "ykloger init undeclared %s", YKLOGER_LOGFILE_NAME);
         RETURN_FALSE;
     }
@@ -301,8 +301,8 @@ PHP_METHOD(ykloger, init){
     loglevel_key = zend_string_init(ZEND_STRL(YKLOGER_LOGLEVEL_NAME), 0);
     loglevel = zend_hash_find(Z_ARRVAL_P(conf), loglevel_key);
     if (loglevel == NULL) {
-        zend_string_free(logfile_key);
-        zend_string_free(loglevel_key);
+        zend_string_release(logfile_key);
+        zend_string_release(loglevel_key);
         php_error_docref(NULL, E_ERROR, "ykloger init undeclared %s", YKLOGER_LOGLEVEL_NAME);
         RETURN_FALSE;
     }
@@ -342,8 +342,8 @@ PHP_METHOD(ykloger, init){
     zend_update_static_property(ykloger_ce, ZEND_STRL(YKLOGER_POOL_LOG), &log_pool);
     zend_update_static_property(ykloger_ce, ZEND_STRL(YKLOGER_POOL_WF_LOG), &log_wf_pool);
     
-    zend_string_free(logfile_key);
-    zend_string_free(loglevel_key);
+    zend_string_release(logfile_key);
+    zend_string_release(loglevel_key);
     
     RETURN_TRUE;
 }
