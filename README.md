@@ -1,5 +1,5 @@
 # php-ykloger
-php日志记录扩展. 共有5中级别. 分为:  debug,  info(trace), warn, error, fatal.  
+php日志记录扩展. 共有5种级别. 分为:  debug,  info(trace), warn, error, fatal.  
 (php7 版本)
 
 ##install
@@ -12,7 +12,8 @@ mac or linux:
 
 ##php.ini
 ykloger.auto_flush_num = 50  
-达到多少条日志时, 才开始写入文件
+达到多少条日志时, 才开始写入文件.  
+当request 结束时, 也会写入.  
 
 ##init
 date_default_timezone_set('Etc/GMT-8');  
@@ -42,11 +43,11 @@ $errno    错误码
 $params   需要记录的其他字段信息 (只支持一级数组)  
 
 ##other methods
-ykloger::reset_request_time(uint timestamp = 0); // ykloger::resetStartTime 是reset_request_time的别名  
+ykloger::resetRequestTime(uint timestamp = 0); // ykloger::reset_request_time 是resetRequestTime的别名  
 重置初始化的时间  
 
-string $request_id = ykloger::get_request_id(); // ykloger::getRequestId 是get_request_id的别名  
-获取本次request的随机ID  
+string $request_id = ykloger::getRequestId(); // ykloger::get_request_id 是getRequestId的别名  
+获取本次request的随机ID, 不保证不会重复    
 
 ##other tips
 BqLogger alias ykloger  
