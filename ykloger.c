@@ -7,6 +7,8 @@
 #include "php_ini.h"
 #include "ext/standard/info.h"
 #include "ext/date/php_date.h"
+#include "ext/json/php_json.h"
+#include "zend_smart_str.h"
 #include "ext/standard/php_string.h"
 #include "ext/standard/php_lcg.h"
 #include "ext/standard/md5.h"
@@ -117,11 +119,30 @@ static char * ykloger_array_to_string(const char **file, uint *line, zval *param
                 continue;
             }
 
+			if (Z_TYPE_P(val) == IS_ARRAY){
+				smart_str buf = {0};
+
+				JSON_G(error_code) = PHP_JSON_ERROR_NONE;
+				JSON_G(encode_max_depth) = PHP_JSON_PARSER_DEFAULT_DEPTH;
+				php_json_encode(&buf, val, PHP_JSON_UNESCAPED_UNICODE);
+
+				zval_ptr_dtor(val);
+				if (JSON_G(error_code) != PHP_JSON_ERROR_NONE) {
+					php_error_docref(NULL, E_NOTICE, "json encode fail: %d", JSON_G(error_code)); \
+					ZVAL_BOOL(val, 0);
+				} else {
+					smart_str_0(&buf); /* copy? */
+					ZVAL_STR_COPY(val, buf.s);
+				}
+				smart_str_free(&buf);
+			}
+
             convert_to_string(val);
             if (strcmp(ZSTR_VAL(key), "CUSTOM_FILE") == 0) {
                 *file = estrndup(Z_STRVAL_P(val), Z_STRLEN_P(val));
                 continue;
             }
+
 			new_str = zend_string_safe_alloc(4, Z_STRLEN_P(val), 0, 0);
 			for(source = (char *) Z_STRVAL_P(val), end=source + Z_STRLEN_P(val), target = ZSTR_VAL(new_str); source < end; source++) {
 				c = *source;
