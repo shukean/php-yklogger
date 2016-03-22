@@ -40,7 +40,7 @@ ykloger::fatal(string $message, uint $errno = 0, arary $params = []);
 ##methods argument
 $message  日志描述  
 $errno    错误码  
-$params   需要记录的其他字段信息 (只支持一维数组)  
+$params   需要记录的其他字段信息, 二维数组将会转为json存入
 
 ##other methods
 ykloger::resetRequestTime(uint timestamp = 0); // ykloger::reset_request_time 是resetRequestTime的别名  
