@@ -8,6 +8,6 @@
 // ARG_ENABLE("ykloger", "enable ykloger support", "no");
 
 if (PHP_YKLOGER != "no") {
-	EXTENSION("ykloger", "ykloger.c", PHP_EXTNAME_SHARED, "/DZEND_ENABLE_STATIC_TSRMLS_CACHE=1");
+	EXTENSION("yklogger", "yklogger.c", PHP_EXTNAME_SHARED, "/DZEND_ENABLE_STATIC_TSRMLS_CACHE=1");
 }
 

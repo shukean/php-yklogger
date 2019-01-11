@@ -1,16 +1,16 @@
 --TEST--
-Check for ykloger presence
+Check for yklogger presence
 --SKIPIF--
-<?php if (!extension_loaded("ykloger")) print "skip"; ?>
+<?php if (!extension_loaded("yklogger")) print "skip"; ?>
 --FILE--
-<?php 
-echo "ykloger extension is available\n";
+<?php
+echo "yklogger extension is available\n";
 
-if(defined('YKLOGER_LEVEL_DEBUG')){
+if(defined('YKLOGGER_LEVEL_DEBUG')){
     echo "var defined\n";
 }
 
 ?>
 --EXPECT--
-ykloger extension is available
+yklogger extension is available
 var defined

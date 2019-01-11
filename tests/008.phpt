@@ -1,16 +1,16 @@
 --TEST--
-Check for ykloger write log 
+Check for yklogger write log 
 --SKIPIF--
-<?php if (!extension_loaded("ykloger")) print "skip"; ?>
+<?php if (!extension_loaded("yklogger")) print "skip"; ?>
 --FILE--
 <?php
 $log = dirname(__FILE__).'/test';
-ykloger::init([
+YkLogger::init([
     'logFile' => $log,
     'logLevel' => 'debug'
 ]);
 
-var_dump(ykloger::debug('1234567'));
+var_dump(YkLogger::debug('1234567'));
 
 ?>
 --EXPECTF--

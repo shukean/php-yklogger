@@ -1,18 +1,18 @@
 --TEST--
-Check for ykloger init repeat
+Check for yklogger init repeat
 --SKIPIF--
-<?php if (!extension_loaded("ykloger")) print "skip"; ?>
+<?php if (!extension_loaded("yklogger")) print "skip"; ?>
 --FILE--
 <?php 
-ykloger::init([
+YkLogger::init([
     'logFile' => dirname(__LINE__),
-    'logLevel' => YKLOGER_LEVEL_WARN 
+    'logLevel' => YKLOGGER_LEVEL_WARN 
 ]);
-ykloger::init([
+YkLogger::init([
     'logFile' => dirname(__LINE__),
-    'logLevel' => YKLOGER_LEVEL_WARN 
+    'logLevel' => YKLOGGER_LEVEL_WARN 
 ]);
 
 ?>
 --EXPECTF--
-Notice: ykloger::init(): ykloger is all ready inited in %s004.php on line %d 
+Notice: YkLogger::init(): yklogger is all ready inited in %s004.php on line %d 

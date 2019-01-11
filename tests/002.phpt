@@ -1,11 +1,11 @@
 --TEST--
-Check for ykloger not init
+Check for yklogger not init
 --SKIPIF--
-<?php if (!extension_loaded("ykloger")) print "skip"; ?>
+<?php if (!extension_loaded("yklogger")) print "skip"; ?>
 --FILE--
 <?php 
 $dir = __FILE__;
-var_dump(ykloger::debug("test"));
+var_dump(YkLogger::debug("test"));
 ?>
 --EXPECTF--
-Fatal error: ykloger::debug(): ykloger not call init function in %s002.php on line %d 
+Fatal error: YkLogger::debug(): yklogger not call init function in %s002.php on line %d 

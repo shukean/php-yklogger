@@ -1,14 +1,14 @@
 --TEST--
-Check for ykloger init fail not pass logFile 
+Check for yklogger init fail not pass logFile 
 --SKIPIF--
-<?php if (!extension_loaded("ykloger")) print "skip"; ?>
+<?php if (!extension_loaded("yklogger")) print "skip"; ?>
 --FILE--
 <?php 
-ykloger::init([
+Yklogger::init([
     'logFile1' => dirname(__LINE__),
-    'logLevel' => YKLOGER_LEVEL_WARN 
+    'logLevel' => YKLOGGER_LEVEL_WARN 
 ]);
 
 ?>
 --EXPECTF--
-Fatal error: ykloger::init(): ykloger init undeclared logFile in %s005.php on line %d 
+Fatal error: YkLogger::init(): yklogger init undeclared logFile in %s005.php on line %d 
